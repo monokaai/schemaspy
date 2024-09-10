@@ -1,22 +1,22 @@
 # 使い方
 
-まず schemaspy の Docker イメージをビルドする。
+まず SchemaSpy の Docker イメージをビルドする。
 
 ```
-docker build --no-cache -t schemaspy/japanese .
+docker build --no-cache -t schemaspy_jp .
 ```
 
 テスト用の MySQL コンテナを立ち上げる。
 
 - initdb.d 内のスクリプトが自動実行してテストデータ挿入が完了する
 - users テーブル自体と内部のカラムおよびコメントに日本語でコメントあり（文字化けチェック用）
-- MySQL の`character_set_client`が`utf8`や`utf8mb4`でないと文字化けするので、コンテナ起動時に mysql/my.cnf で設定
+- MySQL の`character_set_client`が`utf8`や`utf8mb4`でないと文字化けするので、コンテナ起動時に mysql/my.cnf で設定している（ログインしてセッション中のみ変更する方法は後述）
 
 ```
 docker-compose up -d
 ```
 
-schemaspy のコンテナを一時的に立ち上げて 先ほど起動した MySQL に接続し、ER 図やテーブル定義を出力する。
+SchemaSpy のコンテナを一時的に立ち上げて 先ほど起動した MySQL に接続し、ER 図やテーブル定義を出力する。
 
 ```
 docker run \
@@ -24,7 +24,7 @@ docker run \
     --net=host \
     -v $PWD/output:/output \
     -v $PWD/mysql/schemaspy.properties:/schemaspy.properties \
-    schemaspy/japanese:latest
+    schemaspy_jp:latest
 ```
 
 Access Denied となって MySQL に接続できない場合、Docker ボリュームをリセットすると動作する場合がある。
@@ -54,16 +54,19 @@ show create table users\G
 show columns from users
 ```
 
-DB の文字セット確認
+文字セットの確認・変更
 
 ```
--- サーバーのデフォルト文字セットを確認
+-- サーバーの文字セットを確認
 SHOW VARIABLES LIKE 'character_set_server';
 
--- デフォルトのクライアント文字セットを確認
+-- クライアント通信用の文字セットを確認
 SHOW VARIABLES LIKE 'character_set_client';
 
--- デフォルトのデータベース文字セットを確認
+-- セッション中のクライアント通信用文字セットを変更
+SET character_set_database=utf8mb4;
+
+-- データベースの文字セットを確認
 SHOW VARIABLES LIKE 'character_set_database';
 
 ```
