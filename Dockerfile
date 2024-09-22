@@ -1,4 +1,4 @@
-FROM arm64v8/openjdk:23-ea-17-slim-bullseye
+FROM eclipse-temurin:17-jdk-jammy
 
 ENV MYSQL_DRIVER_URL=https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-j-9.0.0.tar.gz
 ENV POSTGRES_DRIVER_URL=https://jdbc.postgresql.org/download/postgresql-42.7.4.jar
