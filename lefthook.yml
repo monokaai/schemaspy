@@ -1,0 +1,15 @@
+pre-commit:
+  parallel: true
+  commands:
+    trailing-whitespace:
+      glob: "**/*"
+      run: sed -i 's/[[:space:]]*$//' {staged_files}
+    end-of-file-fixer:
+      glob: "**/*"
+      run: sed -i -e :a -e '/^\n*$/{$d;N;ba' -e '}' {staged_files}
+    check-yaml:
+      glob: "**/*.{yaml,yml}"
+      run: yamllint {staged_files}
+    check-added-large-files:
+      glob: "**/*"
+      run: find {staged_files} -size +500k | grep . && exit 1 || exit 0
